@@ -1,0 +1,43 @@
+pipeline:
+  install:
+    image: node:${NODE_TAG_VERSION}
+    pull: true
+    commands:
+     - npm ci
+
+  lint:
+    group: lint-and-test
+    image: node:${NODE_TAG_VERSION}
+    pull: true
+    commands:
+     - npm run lint
+
+  test:
+    group: lint-and-test
+    image: node:${NODE_TAG_VERSION}
+    pull: true
+    commands:
+     - npm test
+
+  publish:
+    when:
+      tag: release*
+      event: tag
+      branch: main
+      status: success
+    image: plugins/npm
+    settings:
+      username:
+        from_secret: npm_username
+      password:
+        from_secret: npm_password
+      email:
+        from_secret: npm_email
+
+branches: main
+
+matrix:
+  NODE_TAG_VERSION:
+    - erbium-alpine
+    - lts-alpine
+    - current-alpine
