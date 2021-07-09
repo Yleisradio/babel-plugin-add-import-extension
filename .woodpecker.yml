@@ -8,14 +8,12 @@ pipeline:
   lint:
     group: lint-and-test
     image: node:${NODE_TAG_VERSION}
-    pull: true
     commands:
      - npm run lint
 
   test:
     group: lint-and-test
     image: node:${NODE_TAG_VERSION}
-    pull: true
     commands:
      - npm test
 
@@ -25,14 +23,10 @@ pipeline:
       event: tag
       branch: main
       status: success
-    image: plugins/npm
-    settings:
-      username:
-        from_secret: npm_username
-      password:
-        from_secret: npm_password
-      email:
-        from_secret: npm_email
+    image: node:current-alpine
+    commands:
+      - npm config set //registry.npmjs.org/:_authToken=$${NPM_TOKEN}
+      - npm publish
 
 branches: main
 
