@@ -1,19 +1,19 @@
 pipeline:
   install:
-    image: node:${NODE_TAG_VERSION}
+    image: node:lts-alpine
     pull: true
     commands:
      - npm ci
 
   lint:
     group: lint-and-test
-    image: node:${NODE_TAG_VERSION}
+    image: node:lts-alpine
     commands:
      - npm run lint
 
   test:
     group: lint-and-test
-    image: node:${NODE_TAG_VERSION}
+    image: node:lts-alpine
     commands:
      - npm test
 
@@ -21,17 +21,5 @@ pipeline:
     when:
       tag: release*
       event: tag
-      branch: main
-      status: success
-    image: node:current-alpine
-    commands:
-      - npm config set //registry.npmjs.org/:_authToken=$${NPM_TOKEN}
-      - npm publish
-
-branches: main
-
-matrix:
-  NODE_TAG_VERSION:
-    - erbium-alpine
-    - lts-alpine
-    - current-alpine
+    image: plugins/npm
+    secrets: [ npm_username, npm_password, npm_email ]
