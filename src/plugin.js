@@ -6,6 +6,9 @@ const { resolve, extname, dirname } = require('path')
 const isActiveExtension = (module, observedScriptExtensions) =>
   observedScriptExtensions.indexOf(extname(module).replace(/[^a-z]/, '')) > -1
 
+const isOmittedExtension = (module, omittedScriptExtensions) =>
+  omittedScriptExtensions.indexOf(extname(module).replace(/[^a-z]/, '')) > -1
+
 const isNodeModule = module => {
   if (module.startsWith('.') || module.startsWith('/')) {
     return false
@@ -22,9 +25,10 @@ const isNodeModule = module => {
   }
 }
 
-const skipModule = (module, { replace, extension, observedScriptExtensions }) =>
+const skipModule = (module, { replace, extension, observedScriptExtensions, omittedScriptExtensions }) =>
   !module.startsWith('.') ||
   isNodeModule(module) ||
+  isOmittedExtension(module, omittedScriptExtensions) ||
   (
     replace && (isActiveExtension(module, observedScriptExtensions) || extname(module) === `.${extension}`)
       ? extname(module) === `.${extension}`
@@ -34,7 +38,11 @@ const skipModule = (module, { replace, extension, observedScriptExtensions }) =>
   )
 
 const makeDeclaration =
-  ({ declaration, args, replace = false, extension = 'js', observedScriptExtensions = ['js', 'ts', 'jsx', 'tsx', 'mjs', 'cjs'] }) =>
+  ({
+    declaration, args, replace = false, extension = 'js',
+    observedScriptExtensions = ['js', 'ts', 'jsx', 'tsx', 'mjs', 'cjs'],
+    omittedScriptExtensions = ['json']
+  }) =>
     (path, { file: { opts: { filename } } }) => {
       const { node } = path
       const { source, exportKind, importKind } = node
@@ -45,7 +53,7 @@ const makeDeclaration =
 
       const module = source && source.value
 
-      if (skipModule(module, { replace, extension, observedScriptExtensions })) { return }
+      if (skipModule(module, { replace, extension, observedScriptExtensions, omittedScriptExtensions })) { return }
 
       const dirPath = resolve(dirname(filename), module)
 
