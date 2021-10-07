@@ -1,5 +1,5 @@
 {
-  "name": "babel-plugin-add-import-extension",
+  "name": "@yleisradio/babel-plugin-add-import-extension",
   "version": "1.6.0",
   "description": "A babel plugin to add extension on project modules imports",
   "main": "src/plugin.js",
@@ -15,7 +15,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://codeberg.org/karl/babel-plugin-add-import-extension.git"
+    "url": "https://github.com/Yleisradio/babel-plugin-add-import-extension.git"
   },
   "keywords": [
     "babel",
