@@ -79,6 +79,19 @@ import type * as AllTypes from './lib/something'
 import type * as AllTypesTest from './lib/something.test'
 `
 
+const moduleImports = `
+import standard from 'standard'
+import opts from 'standard/options'
+import { transformFile } from '@babel/core'
+import tf from '@babel/core/lib/transform-file'
+`
+
+const omittedImports = `
+import svg from './lib/something.svg'
+import json from './lib/something.json'
+import cssJs from './lib/someting.css'
+`
+
 describe('Replace', () => {
   test.each`
     type                                                  | statements          | extension    | replace      | observedScriptExtensions
@@ -112,6 +125,31 @@ describe('Replace', () => {
   `('should $type', ({ statements, extension, replace, observedScriptExtensions }) => {
     const { code } = babel.transformSync(statements, {
       plugins: [syntaxTypescript, [plugin, { extension, replace, observedScriptExtensions }]],
+      filename: ''
+    })
+
+    expect(code).toMatchSnapshot()
+  })
+
+  test.each`
+  type                  | statements
+  ${'module imports'}   | ${moduleImports}
+  `('should $type', ({ statements }) => {
+    const { code } = babel.transformSync(statements, {
+      plugins: [plugin],
+      filename: ''
+    })
+
+    expect(code).toMatchSnapshot()
+  })
+
+  test.each`
+  type                           | statements           | omittedScriptExtensions
+  ${'omitted imports default'}   | ${omittedImports}    | ${undefined}
+  ${'omitted imports w/ svg'}    | ${omittedImports}    | ${['json', 'svg']}
+  `('should $type', ({ statements, omittedScriptExtensions }) => {
+    const { code } = babel.transformSync(statements, {
+      plugins: [[plugin, { omittedScriptExtensions }]],
       filename: ''
     })
 

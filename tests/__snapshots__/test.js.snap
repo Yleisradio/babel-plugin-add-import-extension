@@ -308,6 +308,25 @@ import * as replacer_Something from \\"./lib/something.js\\";
 import * as replacer_SomethingTest from \\"./lib/something.test.js\\";"
 `;
 
+exports[`Replace should module imports 1`] = `
+"import standard from 'standard';
+import opts from \\"standard/options.js\\";
+import { transformFile } from '@babel/core';
+import tf from \\"@babel/core/lib/transform-file.js\\";"
+`;
+
+exports[`Replace should omitted imports default 1`] = `
+"import svg from \\"./lib/something.svg.js\\";
+import json from './lib/something.json';
+import cssJs from \\"./lib/someting.css.js\\";"
+`;
+
+exports[`Replace should omitted imports w/ svg 1`] = `
+"import svg from './lib/something.svg';
+import json from './lib/something.json';
+import cssJs from \\"./lib/someting.css.js\\";"
+`;
+
 exports[`Replace should skip type-only exports 1`] = `
 "export type { NamedType } from './lib/something';
 export type { NamedTypeTest } from './lib/something.test';"
