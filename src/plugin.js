@@ -9,14 +9,14 @@ const isActiveExtension = (module, observedScriptExtensions) =>
 const isOmittedExtension = (module, omittedScriptExtensions) =>
   omittedScriptExtensions.indexOf(extname(module).replace(/[^a-z]/, '')) > -1
 
-const isNodeModule = module => {
+const isNodeModuleRoot = module => {
   if (module.startsWith('.') || module.startsWith('/')) {
     return false
   }
 
   try {
     require.resolve(module)
-    return true
+    return /^(?:@[^/]+\/[^/]+|^[^@/]+)$/.test(module)
   } catch (e) {
     if (e.code === 'MODULE_NOT_FOUND') {
       return false
@@ -26,8 +26,7 @@ const isNodeModule = module => {
 }
 
 const skipModule = (module, { replace, extension, observedScriptExtensions, omittedScriptExtensions }) =>
-  !module.startsWith('.') ||
-  isNodeModule(module) ||
+  isNodeModuleRoot(module) ||
   isOmittedExtension(module, omittedScriptExtensions) ||
   (
     replace && (isActiveExtension(module, observedScriptExtensions) || extname(module) === `.${extension}`)
