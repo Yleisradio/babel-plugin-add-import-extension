@@ -3,6 +3,11 @@
   "version": "1.6.0",
   "description": "A babel plugin to add extension on project modules imports",
   "main": "src/plugin.js",
+  "files": [
+    "src",
+    "package.json",
+    "README.md"
+  ],
   "scripts": {
     "test": "jest tests",
     "lint": "standard",

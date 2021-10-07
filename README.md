@@ -46,6 +46,16 @@ plugins: [
 ];
 ```
 
+To skip the files that already have an extension that shouldn't be replaced or appended,
+you can change the `omittedScriptExtensions` option. The default list of omitted extensions
+is `['json']`
+
+```js
+plugins: [
+  ["babel-plugin-add-import-extension", { omittedScriptExtensions: ['json', 'svg'] }], // will not add extension to *.json or *.svg imports
+];
+```
+
 ## Let's the transformation begin :)
 
 A module import without extension:
@@ -96,4 +106,5 @@ will be converted to:
 export { add, double } from "./lib/numbers.js";
 ```
 
-What this plugin does is to check all imported modules and if your module is not on `node_module` it will consider that is a project/local module and add the choosed extension, so for node modules it don't add any extension.
+What this plugin does is to check all imported modules, and if the module is 
+local, or it is not a "root import", it will add the extension to the import.
